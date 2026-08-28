@@ -1,0 +1,60 @@
+// TRACE-X // Criminal Intelligence Fusion — Prisma schema
+// Persists case registry, digital evidence (BSA 2023 §63 chain of custody),
+// and immutable audit logs. Graph topology itself is served from the
+// intelligence data layer (src/lib/tracex/mock-data.ts).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CaseFile {
+  id        String    @id
+  codename  String
+  agency    String
+  desk      String
+  status    String    @default("ACTIVE")
+  openedAt  DateTime  @default(now())
+  evidence  Evidence[]
+  audits    AuditLog[]
+}
+
+model Evidence {
+  id             String    @id @default(cuid())
+  caseId         String
+  filename       String
+  fileType       String // FIR_PDF | CDR_CSV | BANK_CSV | TEXT_NOTE | OTHER
+  mimeType       String
+  sizeBytes      Int
+  sha256         String
+  entityCount    Int       @default(0)
+  linkCount      Int       @default(0)
+  entitiesJson   String    @default("[]") // JSON: [{ text, type, confidence }]
+  custodyJson    String    @default("[]") // JSON: [{ event, actor, at }]
+  // Persisted extracted graph topology — lets /api/graph reconstruct the
+  // live (seed + ingested) graph on reload instead of losing an analyst's
+  // uploaded work. JSON: { nodes: TraceXNode[], edges: TraceXEdge[] }
+  nodesJson      String    @default("[]")
+  edgesJson      String    @default("[]")
+  extractionMethod String  @default("") // REAL_TEXT | OCR_SIM | SYNC_DISPATCH
+  ingestedAt     DateTime  @default(now())
+  case           CaseFile  @relation(fields: [caseId], references: [id])
+
+  @@index([caseId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  caseId    String
+  action    String // CASE_OPENED | EVIDENCE_INGESTED | REPORT_EXPORTED | COPILOT_QUERY
+  detail    String
+  actor     String   @default("ANALYST-7")
+  createdAt DateTime @default(now())
+  case      CaseFile @relation(fields: [caseId], references: [id])
+
+  @@index([caseId])
+}
