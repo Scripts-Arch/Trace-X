@@ -1,5 +1,11 @@
 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
   <defs>
+    <!-- Dark Dashboard Background Gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#1A2030" />
+      <stop offset="100%" stop-color="#000000" />
+    </radialGradient>
+    
     <!-- Tech Gradient for Lines -->
     <linearGradient id="traceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#00F0FF" />
@@ -17,13 +23,16 @@
 
     <!-- Stronger Glow for Core -->
     <filter id="coreGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="2.5" result="blur" />
+      <feGaussianBlur stdDeviation="3" result="blur" />
       <feMerge>
         <feMergeNode in="blur" />
         <feMergeNode in="SourceGraphic" />
       </feMerge>
     </filter>
   </defs>
+
+  <!-- Background Plate -->
+  <rect x="0" y="0" width="100" height="100" rx="16" fill="url(#bgGrad)" />
 
   <!-- Outer System Ring (Subtle dashed orbit) -->
   <circle cx="50" cy="50" r="45" fill="none" stroke="#334155" stroke-width="1" stroke-dasharray="3 5" opacity="0.6"/>
@@ -34,7 +43,7 @@
     <ellipse cx="50" cy="50" rx="32" ry="14" stroke-width="2" transform="rotate(45 50 50)" />
     <ellipse cx="50" cy="50" rx="32" ry="14" stroke-width="2" transform="rotate(-45 50 50)" />
     
-    <!-- Secondary Outer Orbits (for depth, like image 1 & 4) -->
+    <!-- Secondary Outer Orbits (for depth) -->
     <ellipse cx="50" cy="50" rx="42" ry="20" stroke-width="1" opacity="0.4" transform="rotate(45 50 50)" />
     <ellipse cx="50" cy="50" rx="42" ry="20" stroke-width="1" opacity="0.4" transform="rotate(-45 50 50)" />
   </g>
